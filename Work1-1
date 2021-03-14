@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<memory.h>
+#include<string.h>
+#include<algorithm>
+
+using namespace std;
+
+const int INF = 0x3f3f3f3f;
+const int N = 1005;
+//a数组存图，d数组维护选出x的最小边值,n是点数，m是边数，ans是最小生成树的边权总和
+int a[N][N], d[N], n, m, ans;
+//v[x]用来标记x是否已经被加入最小生成树
+bool v[N];
+
+void prim() {
+	memset(d, INF, sizeof(d));//初始无连接默认为无穷大
+	memset(v, 0, sizeof(v));
+	d[1] = 0;//加入第一个点，到自己的边值为0，其他值在主函数根据读图更新为到1点最近的距离
+	for (int i = 1; i <= n; i++){
+		int x = 0;
+		for (int j = 1; j <= n; j++) {//用j来遍历不是最小生成树里的点，找到离树最近的那个点的编号赋给x
+			if (!v[j] && (x == 0 || d[j] < d[x]))
+				x = j;
+		}
+		v[x] = 1;//x点加入最小生成树
+		printf("v%d\n", x);
+		for (int y = 1; y <= n; y++){//用y遍历不是最小生成树内的点，更新其到最小生成树的最短距离
+			if (!v[y])
+				d[y] = min(d[y], a[x][y]);//y点与最小生成树没联通还是无穷大，有联通要比较，可能是原来最短的，也可能是x加入后变短了
+		}
+	}
+}
+
+int main(void){
+	scanf("%d%d", &n, &m);
+	//构建邻接矩阵
+	memset(a, INF, sizeof(a));
+	for (int i = 1; i <= n; i++)
+		a[i][i] = 0;
+	for (int i = 1; i <= m; i++){
+		int x, y, z;
+		scanf("%d%d%d", &x, &y, &z);
+		a[y][x] = a[x][y] = min(a[x][y], z);//考虑有两点间有两条路以上的情况
+	}
+	//求最小生成树
+	printf("加入顺序:\n");
+	prim();
+	for (int i = 2; i <= n; i++)
+		ans += d[i];
+	printf("最小生成树边权和为:\n%d\n", ans);
+}
+/*测试例子
+6 10
+1 2 6
+1 3 1
+1 4 5
+2 3 5
+2 5 3
+3 4 5
+3 5 6
+3 6 4
+4 6 2
+5 6 6
+*/
