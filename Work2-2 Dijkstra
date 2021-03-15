@@ -1,0 +1,65 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<memory.h>
+#include<string.h>
+#include<algorithm>
+
+using namespace std;
+
+const int INF = 0x3f3f3f3f;
+const int N = 1005;
+
+int a[N][N], dist[N], n, m;//dist[i]维护1到i点的最短距离,a[x][y]指x到y的距离
+bool v[N];//标记访问过的节点
+
+void Dijkstra() {
+	memset(dist, INF, sizeof(dist));
+	dist[1] = 0;
+	for (int i = 1; i < n; i++) {
+		int x = 0;
+		//找到未标记节点中dist最小的，即离起点最近的点
+		for (int j = 1; j <= n; j++) {
+			if (!v[j] && (x == 0 || dist[j] < dist[x]))
+				x = j;
+		}
+		v[x] = 1;
+		//用当前的最短路点x对其他点进行最短路（那条1到i的虚拟路径）更新
+		for (int y = 1; y <= n; y++) {
+			dist[y] = min(dist[y], dist[x] + a[x][y]);
+		}
+	}
+}
+
+int main(void) {
+	scanf("%d%d", &n, &m);//n是点数，m是边数
+	memset(a, INF, sizeof(a));//连不到默认为无穷远
+	for (int i = 1; i <= n; i++)
+		a[i][i] = 0;//自己到自己的距离为0
+	for (int i = 1; i <= m; i++) {
+		int x, y, z;
+		scanf("%d%d%d", &x, &y, &z);
+		a[x][y] = min(a[x][y], z);//x到y可能不止一条，保留最短的即可
+	}
+	Dijkstra();
+	
+	for (int i = 1; i <= n; i++){
+		printf("到点%d的最短路距离为：%d\n\n", i,dist[i]);
+	}
+	
+	printf("故点a到点h的距离为：%d\n", dist[n]);
+	
+}
+/*测试例子
+8 11
+1 2 1
+2 4 2
+3 1 2
+4 3 1
+4 6 8
+5 4 2
+6 5 2
+5 7 2
+7 6 3
+7 8 3
+8 6 2
+*/
