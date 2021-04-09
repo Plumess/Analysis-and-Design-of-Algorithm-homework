@@ -1,0 +1,68 @@
+#include<iostream>  
+#include<cstdio>  
+#include<algorithm>  
+#include<cmath>   
+#include<time.h>  
+#include<cstdlib>  
+using namespace std;
+const int N = 5;
+void Random(int a[],int n)//随机生成乱序数组
+{  
+    srand( (unsigned)time( NULL )); 
+    for(int i=0;i<=n;i++){
+        a[i]=rand()%1000;//%1000取1000以内的数
+    }
+} 
+
+void merge(int *a, int left, int mid, int right) //归并算法  
+{  
+    int k, begin1, begin2, end1, end2;
+    begin1 = left;  
+    end1 = mid;  
+    begin2 = mid + 1;  
+    end2 = right;  
+    int *temp = (int *)malloc((right - left + 1) * sizeof(int));  
+    for(k = 0; begin1 <= end1 && begin2 <= end2; k++) //自小到大排序  
+    {  
+        if(a[begin1] <= a[begin2])  
+            temp[k] = a[begin1++];  
+        else  
+            temp[k] = a[begin2++];  
+    }  
+    if(begin1 <= end1) //左剩  
+        memcpy(temp + k, a + begin1, (end1 - begin1 + 1) * sizeof(int));  
+    else //右剩  
+        memcpy(temp + k, a + begin2, (end2 - begin2 + 1) * sizeof(int));  
+    memcpy(a + left, temp, (right - left + 1) * sizeof(int)); //排序后复制到原数组  
+    free(temp); //释放空间  
+}  
+void merge_sort(int *a, unsigned int begin, unsigned int end)  
+{  
+    int mid;  
+    if(begin < end)  
+    {   
+        mid = (end + begin) / 2; 
+        merge_sort(a, begin, mid); //分治  
+        merge_sort(a, mid + 1, end); //分治  
+        merge(a, begin, mid, end);  //合并两个已排序的数列  
+    }  
+}  
+int main()  
+{  
+    int a[N];  
+    Random(a,N);  
+    for(int i=0;i<N;i++)  
+    {  
+        cout<<a[i]<<" ";  
+    }  
+    cout << endl;
+
+    merge_sort(a, 0, N-1);  
+    for(int i=0;i<N;i++)  
+    {  
+        cout<<a[i]<<" ";  
+    }
+    cout << endl;
+    system("pause");
+    return 0;  
+}  
