@@ -1,0 +1,85 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+#include<time.h>
+#include<cstring>
+#include<algorithm>
+ 
+using namespace std;
+
+int m, n;
+int c[1000][1000];//记录当取到xi位和yj位时最长子序列的长度
+string x, y;//x,y两个子序列
+int res[1000][1000];//标记数组，记录判断xi？=yj的状态
+
+void lcs()
+{
+    // 先定义初始状态，x0与yi以及xi与y0因为有一个序列长度为0，所以最长子序列一定为0
+    for (int i = 0; i <= m; ++i) c[i][0] = 0;
+    for (int i = 0; i <= n; ++i) c[0][i] = 0;
+
+    //开始用状态转移方程计算
+    for (int i = 1; i <= m; ++i)
+    {
+        for (int j = 1; j <= n; ++j)
+        {
+            if (x[i] == y[j]){
+                res[i][j] = 0;
+                c[i][j] = c[i - 1][j - 1] + 1;
+            }
+            else
+            {
+                if (c[i - 1][j] > c[i][j - 1])
+                {
+                    res[i][j] = 1;
+                    c[i][j] = c[i - 1][j];
+                }
+                else
+                {
+                    res[i][j] = 2;
+                    c[i][j] = c[i][j - 1];
+                }
+            }
+        }
+    }
+}
+
+string getlcs()
+{
+    int i = m, j = n;
+    string ans = "";
+    while (i > 0 && j > 0)
+    {
+        if (res[i][j] == 0)
+        {
+            ans = x[i] + ans;
+            i--, j--;
+        }
+        else if (res[i][j] == 1)
+            i--;
+        else if (res[i][j] == 2)
+            j--;
+    }
+    return ans;
+}
+
+int main()
+{
+    cin >> x >> y;
+    m = x.size(), n = y.size();
+    //cout << m << " " << n << endl;
+    x = " " + x;
+    y = " " + y;
+    lcs();
+    int ans = c[m][n];
+    cout << "最长公共子串长度： " << ans << endl;
+    cout << "最长公共子串： " << getlcs() << endl;
+    system("pause");
+    return 0;
+}
+
+/*
+测试案例
+abcdfge
+abcdefg
+*/
