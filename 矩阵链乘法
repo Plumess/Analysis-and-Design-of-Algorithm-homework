@@ -1,0 +1,46 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+#include<time.h>
+#include<cstring>
+#include<algorithm>
+ 
+using namespace std;
+
+int cnt[1000][1000] , s[1000][1000];
+int p[1000];
+int n;
+const int inf = 0x3f3f3f3f;
+int main()
+{
+    cin >> n;
+    for (int i = 0; i <= n; ++i)
+    {
+        cin>>p[i]; 
+        cnt[i][i] = 0;
+    }
+    for (int len = 2; len <= n; ++len)
+    {
+        for (int i = 1; i + len - 1 <= n; ++i)
+        {
+            int j = i + len - 1;
+            cnt[i][j] = inf;
+            s[i][j] = 0;
+            for (int k = i; k < j; ++k)
+            {
+                int tmp = cnt[i][k] + cnt[k + 1][j] + p[i - 1] * p[k] * p[j];
+                if (tmp < cnt[i][j])
+                {
+                    cnt[i][j] = tmp;
+                    s[i][j] = k;
+                }
+            }
+        }
+    }
+    cout << cnt[1][n] << endl;
+    return 0;
+}
+/*
+测试案例
+
+*/
