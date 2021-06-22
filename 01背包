@@ -1,0 +1,36 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+#include<time.h>
+#include<cstring>
+#include<algorithm>
+ 
+using namespace std;
+
+#define N 20
+int f[N+2][N+2];//全局变量，自动初始化为0  
+int w[N];  
+int v[N];  
+int main(){  
+    int n,b;
+    cout << "请输入物品个数" << endl;
+    cin>>n;//物品种类
+    cout << "请输入背包最大容量" << endl;
+    cin>>b;//背包容量
+    cout << "请输入每个物品的重量和价值" << endl;
+    for (int i=1;i<=n; i++)  
+    {  
+        cin >> w[i] >> v[i];  
+    }  
+    for (int i = 1; i <= n; i++) 
+    {
+		for (int j = 1; j <= b; j++) 
+        {
+			if (w[i] > j) f[i][j] = f[i - 1][j];
+			else f[i][j] = max(f[i - 1][j], f[i-1][j - w[i]] + v[i]);
+		}
+	}
+    cout << "当装"<<n<< "种物品时的最大价值是" <<f[n][b] <<endl;//输出最优解
+    system("pause");
+    return 0;
+}
