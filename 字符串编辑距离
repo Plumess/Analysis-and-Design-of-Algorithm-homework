@@ -1,0 +1,55 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+#include<time.h>
+#include<cstring>
+#include<algorithm>
+ 
+using namespace std;
+
+int editDis(string s1,string s2){
+    //假设s2为源串，s1为目标串
+    int len1 = s1.length();
+    int len2 = s2.length();
+    vector<vector<int>> dis(len1 + 1, vector<int>(len2 + 1));
+
+    for (int i = 0; i <= len1;i++){
+        for (int j = 0; j <= len2;j++){
+            //填写初始状态
+            if(i==0){
+                dis[i][j] = j;
+            }
+            else if(j==0){
+                dis[i][j] = i;
+            }
+            //开始dp，因为s1拟合s2和s2拟合s1本质是一样的，所以状态转移方程一定是对称的
+            else{
+                //s1[i-1]==s2[j-1]说明在上一组下标时两者相同，那么就不需要修改，直接i，j各往后推动一个下标即可
+                //否则就需要进行修改，此时在 插入/删除/替换里选最短的那种情况更新dp数组（dis）
+                dis[i][j] = 
+                min(
+                    //dis[i-1][j-1]+0为不修改，+1为直接替换
+                    dis[i - 1][j - 1] + (s1[i - 1] == s2[j - 1] ? 0 : 1),
+                    //dis[i-1][j]+1相当于在s2后插入了s1的最后字符，dis[i][j-1]+1相当于删除s2的最后字符，操作数都是+1
+                    min(dis[i - 1][j] + 1, dis[i][j - 1] + 1)
+                );
+            }
+        }
+    }
+    return dis[len1][len2];
+}
+ 
+int main()
+{
+    string s1, s2;
+    cin >> s1 >> s2;
+    int ans = editDis(s1, s2);
+    cout << ans << endl;
+    system("pause");
+    return 0;
+}
+
+/*
+测试案例
+
+*/
