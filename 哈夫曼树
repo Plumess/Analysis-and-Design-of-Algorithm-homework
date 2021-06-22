@@ -1,0 +1,131 @@
+#include<iostream>
+#include<vector>
+#include<cmath>
+#include<time.h>
+#include<cstring>
+#include<algorithm>
+ 
+using namespace std;
+
+const int maxn = 2e5 + 10;
+const int inf = 0x3f3f3f3f;
+int n;
+struct node
+{
+    int weight;
+    char ch;
+    int lchild, rchild, parent;
+}HuffTree[maxn * 2];
+
+int w[maxn];
+char ch[maxn];
+void select(node HuffTree[], int* a, int *b ,  int n)
+{
+    int weight = inf;
+    for (int i = 0; i < n; ++i)
+    {
+        if (HuffTree[i].parent != -1)
+            continue;
+        else
+        {
+            if (HuffTree[i].weight < weight)
+            {
+                weight = HuffTree[i].weight;
+                *a = i;
+            }
+        }
+    }
+    weight = inf;
+    for (int i = 0; i < n; ++i)
+    {
+        if (HuffTree[i].parent != -1 || i == *a)
+            continue;
+        else
+        {
+            if (HuffTree[i].weight < weight)
+            {
+                weight = HuffTree[i].weight;
+                *b = i;
+            }
+        }
+    }
+    int temp;
+    if (HuffTree[*a].lchild < HuffTree[*b].lchild)
+    {
+        temp = *a;
+        *a = *b;
+        *b = temp;
+        //swap(*a, *b);
+    }
+}
+
+
+void SetHuffTree(node HuffTree[],int w[] , char ch[], int n)
+{
+    for (int i = 0; i < 2 * n - 1; ++i)
+    {
+        HuffTree[i].parent = -1;
+        HuffTree[i].lchild = -1;
+        HuffTree[i].rchild = -1;
+    }
+    for (int i = 0; i < n; ++i)
+    {
+        HuffTree[i].weight = w[i];
+        HuffTree[i].ch = ch[i];
+    }
+    for (int i = n; i < 2 * n - 1; ++i)
+    {
+        int a = 0, b = 0;
+        select(HuffTree, &a, &b, i);
+        HuffTree[a].parent = i;
+        HuffTree[b].parent = i;
+        HuffTree[i].weight = HuffTree[a].weight + HuffTree[b].weight;
+        HuffTree[i].lchild = a;
+        HuffTree[i].rchild = b;
+    }
+
+}
+
+
+void SetHuffCode(node HuffTree[], int n)
+{
+    string s = "";
+    for (int i = 0; i < n; ++i)
+    {
+        s = "";
+        int j = i;
+        while (HuffTree[j].parent != -1)
+        {
+            int k = HuffTree[j].parent;
+            if (j == HuffTree[k].lchild)
+            {
+                s += "0";
+            }
+            else
+            {
+                s += "1";
+            }
+            j = HuffTree[j].parent;
+        }
+        cout << "字符" << HuffTree[i].ch << "的编码" << endl;
+        for (int i = s.size() - 1; i >= 0; --i)
+        {
+            cout << s.at(i);
+        }
+        cout << endl;
+    }
+}
+
+int main()
+{
+    scanf("%d", &n);
+    scanf("%s", ch);
+    for (int i = 0; i < n; ++i)
+    {
+        scanf("%d", &w[i]);
+    }
+    
+    SetHuffTree(HuffTree, w, ch , n);
+    SetHuffCode(HuffTree, n);
+    return 0;
+}
